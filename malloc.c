@@ -31,23 +31,25 @@ int find_free_slot(size_t size){
 
   for (int i = 0; i < SLOTS; ++i){
     slot = i;
-    printf("-> %d: (found:%d,needed:%d)", slot, slots_found, slots_needed);
+    // printf("-> %d: (found:%d,needed:%d)", slot, slots_found, slots_needed);
     if (ledger[i] == NULL) {
-      printf(" => %s", "o");
+      // printf(" => %s", "o");
       slots_found++;
       if(slots_found == slots_needed){
         break;
       }
     } else {
-      printf(" => %s", "x");
+      // printf(" => %s", "x");
       slots_found = 0;
     }
-    printf("\n");
+    // printf("\n");
   }
-  printf("\n");
+  // printf("\n");
 
+  if (slots_found != slots_needed) {
+    return -1;
+  }
   return (slot - slots_needed) + 1;
-
 }
 
 void init_ledger(){
@@ -77,17 +79,55 @@ void test_find_free_slot(){
   printf(" %d should be 3\n", f);
   f = find_free_slot(500);
   printf(" %d should be 6\n", f);
-
-  // init_ledger();
-  // f = find_free_slot(50);
-  // printf(" %d should be 0\n", f);
-
+  f = find_free_slot(50000);
+  printf(" %d should be -1\n", f);
   printf("\n\n\n");
+  init_ledger();
 }
 
-void *malloc(size_t size){
-  int slot = find_free_slot(size);
 
+void *_malloc(size_t size){
+  int slot = find_free_slot(size);
+  int slots_needed = divide_slots(size);
+  printf("m: free slot: %d, needed: %d\n", slot, slots_needed);
+  assert(slots_needed > 0);
+  if (slot == -1)
+    return NULL;
+  void *ptr;
+  ptr = (void *)&mapped_memory[slot];
+  for (int i = 0; i < slots_needed; ++i){
+    printf(".");
+    ledger[slot + i] = ptr;
+  }
+  printf("\n");
+  return ptr;
+}
+
+void _free(void *slot_ptr){
+  for (int i = 0; i < SLOTS; ++i){
+    if (ledger[i] == slot_ptr){
+      ledger[i] = NULL;
+    }
+  }
+}
+
+void print_ledger(){
+  for (int i = 0; i < SLOTS; ++i){
+    printf("%d: %p\n", i, ledger[i]);
+  }
+}
+
+void test_malloc_and_free(){
+  // void *ptr = _malloc(sizeof(char) + 8);
+  // sprintf((char *)ptr, "hello");
+  // printf("%s\n", (char *)ptr);
+  // _free(ptr);
+  void *ptr = _malloc(sizeof(char) + 8);
+  void *ptr2 = _malloc(sizeof(char) + 300);
+  void *ptr3 = _malloc(sizeof(char) + 80);
+  _free(ptr2);
+  void *ptr4 = _malloc(sizeof(char) + 200);
+  print_ledger();
 }
 
 
@@ -96,8 +136,9 @@ int main(int argc, char *argv[]){
 
   init_ledger();
 
-  test_find_free_slot();
-  test_divide_slots();
+  // test_find_free_slot();
+  // test_divide_slots();
+  test_malloc_and_free();
 
 
 

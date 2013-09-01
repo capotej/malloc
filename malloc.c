@@ -118,15 +118,17 @@ void print_ledger(){
 }
 
 void test_malloc_and_free(){
-  // void *ptr = _malloc(sizeof(char) + 8);
-  // sprintf((char *)ptr, "hello");
-  // printf("%s\n", (char *)ptr);
-  // _free(ptr);
-  void *ptr = _malloc(sizeof(char) + 8);
+  void *ptr0 = _malloc(sizeof(char) + 8);
+  sprintf((char *)ptr0, "hello");
+  printf("%s\n", (char *)ptr0);
+  _free(ptr0);
+  void *ptr1 = _malloc(sizeof(char) + 8);
   void *ptr2 = _malloc(sizeof(char) + 300);
   void *ptr3 = _malloc(sizeof(char) + 80);
   _free(ptr2);
   void *ptr4 = _malloc(sizeof(char) + 200);
+  void *ptr5 = _malloc(sizeof(char) + 8);
+
   print_ledger();
 }
 
@@ -139,25 +141,6 @@ int main(int argc, char *argv[]){
   // test_find_free_slot();
   // test_divide_slots();
   test_malloc_and_free();
-
-
-
-  // sprintf((char *)mapped_memory, "hi");
-
-  // void *strstart = mapped_memory[0];
-
-  // sprintf((char *)&mapped_memory[0], "hello");
-
-  // example
-  // char *foo = (char *)malloc(sizeof(char) * 6);
-  // sprintf(foo, "hey");
-
-
-  // printf("%s", (char *)&mapped_memory[0]);
-
-  // free(foo);
-
-
 
 
   return 0;

@@ -3,7 +3,6 @@
 #include <sys/mman.h>
 #include <math.h>
 #include <assert.h>
-#include "malloc.h"
 
 #define _GNU_SOURCE
 
@@ -12,16 +11,16 @@
 #define SLOTS ALLOC_SIZE / CHUNK_SIZE
 
 
-void *mapped_memory = NULL;
+static void *mapped_memory = NULL;
 
-void *ledger[SLOTS];
+static void *ledger[SLOTS];
 
-int divide_slots(size_t size) {
+static int divide_slots(size_t size) {
   return (int)ceil((float)size / CHUNK_SIZE);
 }
 
 // Find first slot that accomodates at least size_t of contingous chunks in ledger
-int find_free_slot(size_t size){
+static int find_free_slot(size_t size){
   int slots_needed = divide_slots(size);
   assert(slots_needed > 0);
 
@@ -46,13 +45,13 @@ int find_free_slot(size_t size){
   return (slot - slots_needed) + 1;
 }
 
-void init_ledger(){
+static void init_ledger(){
   for (int i = 0; i < SLOTS; ++i){
     ledger[i] = NULL;
   }
 }
 
-void init_allocator(){
+static void init_allocator(){
   if (mapped_memory == NULL) {
     mapped_memory = mmap(NULL, ALLOC_SIZE, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
     assert(mapped_memory != MAP_FAILED);
@@ -68,7 +67,8 @@ void *malloc(size_t size){
   if (slot == -1)
     return NULL;
   void *ptr;
-  ptr = (void *)&mapped_memory[slot];
+  // ptr = (void *)&mapped_memory[slot];
+  ptr = mapped_memory + (CHUNK_SIZE * (slot - 1));
   for (int i = 0; i < slots_needed; ++i){
     ledger[slot + i] = ptr;
   }
@@ -83,7 +83,7 @@ void free(void *slot_ptr){
   }
 }
 
-void print_ledger(){
+static void print_ledger(){
   for (int i = 0; i < SLOTS; ++i){
     printf("%d: %p\n", i, ledger[i]);
   }

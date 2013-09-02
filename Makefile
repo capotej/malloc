@@ -6,9 +6,10 @@ HEADERS=malloc.h
 LIBRARIES=malloc.so
 
 main: malloc.c
-	gcc $(CFLAGS) -lm malloc.c -o malloc.o
+	gcc $(CFLAGS) -c -lm malloc.c -o malloc.o
 	ar ruv libmalloc.a malloc.o
 	ranlib libmalloc.a
 
-test: main test_malloc.c
-	gcc $(CFLAGS) -L. -lmalloc test_malloc.c -o test_malloc
+test:
+	gcc $(CFLAGS) -c malloc.c -o -libmalloc.so
+	gcc $(CFLAGS) -L`pwd` -lmalloc test_malloc.c -o test_malloc

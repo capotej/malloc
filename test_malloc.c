@@ -1,9 +1,9 @@
-#include "malloc.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/mman.h>
 #include <math.h>
 #include <assert.h>
+#include "malloc.h"
 
 void test_malloc_and_free(){
   void *ptr0 = malloc(sizeof(char) + 8);

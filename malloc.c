@@ -4,6 +4,8 @@
 #include <math.h>
 #include <assert.h>
 
+#define _GNU_SOURCE
+
 #define ALLOC_SIZE 104857600 // 100 megabytes
 #define CHUNK_SIZE 64        // 64 byte
 #define SLOTS ALLOC_SIZE / CHUNK_SIZE
@@ -52,6 +54,7 @@ void init_ledger(){
 void init_allocator(){
   if (mapped_memory == NULL) {
     mapped_memory = mmap(NULL, ALLOC_SIZE, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
+    assert(mapped_memory != MAP_FAILED);
     init_ledger();
   }
 }

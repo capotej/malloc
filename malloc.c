@@ -88,7 +88,3 @@ void print_ledger(){
     printf("%d: %p\n", i, ledger[i]);
   }
 }
-
-int main(int argc, char const *argv[]){
-  return 0;
-}
